@@ -15,15 +15,25 @@ depends=('libxft' 'libxext' 'xorg-fonts-misc')
 conflicts=('st')
 provides=('st')
 source=(http://dl.suckless.org/st/${_name}-${pkgver}.tar.gz
-        config.h)
+	st-alpha-0.7.diff
+        config.diff)
 sha256sums=('f7870d906ccc988926eef2cc98950a99cc78725b685e934c422c03c1234e6000'
-            '7bc5195bfcafac36f3c4f44b04e9934fb407714e9c9d871cd6ac1170bfb5cd7b')
+            'e89ef927e902f7bf679362ccfda3f03caca92540ebefaf56da24241993c5f30f'
+            'SKIP')
 
 prepare() {
+  cp ${srcdir}/${_name}-${pkgver}/config.def.h .
+
   cd ${srcdir}/${_name}-${pkgver}
+
+  msg2 "Applying alpha patch"
+  patch -p1 < ../st-alpha-0.7.diff
+
+  msg2 "Applying config patch"
+  patch -p0 < ../config.diff
+  
   # skip terminfo which conflicts with nsurses
   sed -i '/\@tic /d' Makefile
-  cp ${srcdir}/config.h config.h
 }
 
 build() {
